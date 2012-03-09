@@ -88,7 +88,7 @@ __END__
 
 =head1 NAME
 
-Mojolicious::Plugin::ParamExpand - Use data structures in your forms
+Mojolicious::Plugin::ParamExpand - Use objects and data structures in your forms
 
 =head1 SYNOPSIS
 
@@ -110,8 +110,8 @@ Mojolicious::Plugin::ParamExpand - Use data structures in your forms
   }
 
   # In your view
-  %= param('order')->{address}
-  %= param('order')->{items}->[0]->{id}
+  %= text_field field('order.address')
+  %= hidden_field field('order.items.0.id')
 
 
 =head1 DESCRIPTION
@@ -139,7 +139,7 @@ Maximum number of array elements C<CGI::Expand> will create.
 =head2 C<param>
 
 Retrieve the nested data structure for the given parameter. 
-Overrides L<Mojolicious::Controller::param>. 
+Overrides L<Mojolicious::Controller/param>. 
 
 For example, the following parameters 
 C<users.0.name=nameA&users.1.name=nameB&id=123> will create:
