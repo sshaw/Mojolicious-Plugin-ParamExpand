@@ -1,3 +1,5 @@
+=pod
+
 =head1 NAME
 
 Mojolicious::Plugin::ParamExpand - Use objects and data structures in your forms
@@ -22,61 +24,123 @@ Mojolicious::Plugin::ParamExpand - Use objects and data structures in your forms
   }
 
   # In your view
-  %= text_field field('order.address')
-  %= hidden_field field('order.items.0.id')
+  %= text_field named('order.address')
+  %= hidden_field named('order.items.0.id')
 
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::ParamExpand> turns the request parameters into a nested data structure using L<CGI::Expand>.
+L<Mojolicious::Plugin::ParamExpand> turns request parameters into nested data 
+structures using L<CGI::Expand> and helps you use these values in a form.
 
 =head1 OPTIONS
 
 Options must be specified when loading the plugin.
 
-=head2 C<separator>
+=head2 separator
 
   $self->plugin('ParamExpand', separator => ',')
 
-The charactor used to separate the flattened structure. 
+The character used to separate the data structure's hierarchy in the 
+flattened parameter. Defaults to C<'.'>.
 
-=head2 C<max_array>
+=head2 max_array
 
   $self->plugin('ParamExpand', max_array => 10)
 
 Maximum number of array elements C<CGI::Expand> will create. 
+Defaults to C<100>.
 
 =head1 Methods
 
-=head2 C<param>
+=head2 param
 
-Retrieve the nested data structure for the given parameter. 
-Overrides L<Mojolicious::Controller/param>. 
+This is just L<Mojolicious::Controller/param>. Using C<Mojolicious::Plugin::ParamExpand> a
+request with the parameters 
 
-For example, the following parameters 
-C<users.0.name=nameA&users.1.name=nameB&id=123> will create:
+  users.0.name=nameA&users.1.name=nameB&id=123
 
-  $users = $self->param('users');   
-  $users->[0]->{name}    	
-  $users->[1]->{name}    	
+will return a nested data structure for the param C<'users'>
+
+  @users = $self->param('users');   
+  $users[0]->{name};    	
+  $users[1]->{name};   	
+
+Other parameters can be accessed as usual
 
   $id = $self->param('id');
 
-=head2 C<field>
+The flattened parameter name can also be used
 
-Create form fields suitable for parameter expansion.
+  $name0 = $self->param('users.0.name');   
 
-  <%= text_field field('users.0.name') %>
-  <%= text_field field('users.1.name') %>
+=head3 Arguments
 
-You can also supply the object or reference:
+C<$name>
 
-  <%= text_field field('book.upc', $item) %>
-  
+The name of the parameter.
+
+=head3 Returns
+
+The value for the given parameter. If applicable it will be an expanded 
+data structure. 
+
+Top level arrays will be returned as arrays B<not> as array references. 
+This is how C<Mojolicious> behaves. In other words
+
+  users.0=userA&users.1=userB 
+
+is equivlent to 
+
+  users=userA&users=userB
+
+=head2 named
+
+Helps to create form fields suitable for parameter expansion. 
+Use this with the L<various Mojolicious tag helpers|Mojolicious::Plugin::TagHelpers>.
+
+  <%= text_field named('users.0.name') %>
+  <%= text_field named('users.1.name') %>
+
+If the expanded representation of the parameter exists in 
+L<the stash|Mojolicious::Controller/stash> it will be used as the default. 
+If a value for the flattened representation exists (e.g., from a form submission) 
+it will be used instead. 
+
+You can also supply the object or reference to retrieve the value from
+
+  <%= text_field named('book.upc', $item) %>
+
+=head3 Arguments
+
+C<$name>
+
+The name of the parameter.
+
+C<$object> 
+
+Optional. The object to retrieve the default value from. Must be a reference to a 
+hash, an array, or something blessed. If not given the value will be retrieved from
+the stash or, for previously submitted forms, the request parameter C<$name>.
+
+=head3 Returns
+
+A two element list containing the unexpanded parameter name and value. 
+
+=head3 Errors
+
+An error will be raised if:
+
+=over 4
+
+=item * C<$name> is not provided
+
+=item * C<$name> cannot be retrieved from C<$object>. 
+
+=item * C<$object> cannot be found in the stash and no default was given
+
+=back
+ 
 =head1 SEE ALSO
 
 L<CGI::Expand>, L<Mojolicious::Plugin::GroupedParams>
-
-
-=cut
-

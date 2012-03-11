@@ -8,7 +8,8 @@ WriteMakefile(
      VERSION_FROM => 'lib/Mojolicious/Plugin/ParamExpand.pm',
      ABSTRACT_FROM => 'lib/Mojolicious/Plugin/ParamExpand.pm',
      AUTHOR       => 'Skye Shaw <sshaw AT lucas.cis.temple.edu>',	      
-     PREREQ_PM    => {'Mojolicious' => '2.50'},
+     #TODO test #1 fails somewhere between here and 2.5 
+     PREREQ_PM    => {'Mojolicious' => '2.57'},
      LICENSE      => 'perl',
      test         => {TESTS => 't/*.t'},
      (eval { ExtUtils::MakeMaker->VERSION(6.46) } ?
