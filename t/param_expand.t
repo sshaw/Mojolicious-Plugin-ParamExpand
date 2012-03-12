@@ -1,6 +1,6 @@
 use Mojo::Base -strict;
 use Mojolicious::Lite;
-use Test::More tests => 45;
+use Test::More tests => 49;
 use Test::Mojo;
 
 package Model;
@@ -15,8 +15,30 @@ package main;
 
 sub qs { join '&', @_ }
 sub user { Model->new(id => 1, name => 'sshaw') }
-sub select_id { sprintf 'input[name="user.id"][value="%s"]', shift }
-sub select_name { sprintf 'input[name="user.name"][value="%s"]', shift }
+
+sub selector 
+{ 
+    my $val = shift;
+    my $fx  = pop;
+    my $sep = shift || '.';
+    $fx->($sep, $val);
+}
+
+sub select_id 
+{ 
+    selector(@_, sub { 
+	sprintf 'input[name="user%sid"][value="%s"]', shift, shift 
+    }); 
+}
+
+sub select_name 
+{ 
+    selector(@_, sub { 
+	sprintf 'input[name="user%sname"][value="%s"]', shift, shift
+    });
+}
+
+{
 
 plugin 'ParamExpand';
 
@@ -25,7 +47,7 @@ get '/params_are_expanded' => sub {
     my $hash   = $self->param('hash');
     my @array  = $self->param('array');
     my $scalar = $self->param('scalar');
-
+    
     $self->render(hash   => $hash, 
 		  array  => \@array, 
 		  scalar => $scalar);
@@ -70,6 +92,7 @@ get '/named_with_invalid_param_name' => sub { shift->named('bad_name') };
 get '/named_array_with_non_numeric_index' => sub { shift->named('array.x', []) };
 get '/named_with_a_non_reference'=> sub { shift->named('x.y', 123) };
 get '/named_with_a_non_existant_accessor' => sub { shift->named('user.x', Model->new) };
+
 
 my $qs = qs 'hash.a=a',
     	    'hash.b.c=b',
@@ -137,11 +160,47 @@ $t->get_ok('/named_with_a_non_reference')
 $t->get_ok('/named_with_a_non_existant_accessor')
     ->status_is(500)
     ->content_like(qr/access a Model/);
+
+}
+
+{
+    plugin 'ParamExpand', separator => '->';
+    get '/user_defined_separator' => sub {
+	my $self = shift;
+	my $user = $self->param('user');
+	$self->render('alt_form', user => $user);
+    };
+
+    my $qs = qs 'user->id=x', 'user->name=skye';
+    my $t = Test::Mojo->new;
+    $t->get_ok("/user_defined_separator?$qs")
+	->status_is(200)
+	->element_exists(select_id('x', '->')) 
+	->element_exists(select_name('skye', '->')); 
+}
+
+# {
+#     plugin 'ParamExpand', max_array => 1;
+
+#     get '/user_defined_max_array' => sub { 
+# 	shift->render(text => 'success!') 
+#     };
+
+#     my $qs = qs 'users.0=a', 'users.1=b';
+#     my $t = Test::Mojo->new;    
+#     $t->get_ok("/user_defined_max_array?$qs")
+# 	->status_is(500)
+# 	->content_like(qr/limit exceeded/);
+# }
       
 __DATA__
 @@ form.html.ep
 <%= text_field named('user.name') %>
 <%= hidden_field named('user.id') %>
+
+@@ alt_form.html.ep
+<%= text_field named('user->name') %>
+<%= hidden_field named('user->id') %>
 
 @@ form_for_array_with_hash.html.ep
 <%= text_field named('users.0.name') %>

@@ -108,7 +108,7 @@ Mojolicious::Plugin::ParamExpand - Use objects and data structures in your forms
       my $order = $self->param('order');
       $order->{address};
       $order->{items}->[0]->{id};
-      $order->{items}->[1]->{price};
+      $order->{items}->[0]->{price};
       # ...
   }
 
@@ -121,6 +121,12 @@ Mojolicious::Plugin::ParamExpand - Use objects and data structures in your forms
 
 L<Mojolicious::Plugin::ParamExpand> turns request parameters into nested data 
 structures using L<CGI::Expand> and helps you use these values in a form.
+
+=head1 MOJOLICIOUS VERSION
+
+Due to the old way C<Mojolicious::Controller> handled multi-valued request parameters 
+versions of Mojolicious B<less than> 2.52 will not work with this plugin. If this is a problem for
+you try L<Mojolicious::Plugin::GroupedParams>.
 
 =head1 OPTIONS
 
@@ -139,6 +145,8 @@ flattened parameter. Defaults to C<'.'>.
 
 Maximum number of array elements C<CGI::Expand> will create. 
 Defaults to C<100>.
+
+To force the array into a hash keyed by its indexes set this to C<0>.
 
 =head1 Methods
 
@@ -182,6 +190,8 @@ This is how C<Mojolicious> behaves. In other words
 is equivlent to 
 
   users=userA&users=userB
+
+If this is undesirable you could L<< set C<max_array> to zero|/max_array >>.
 
 =head2 named
 
