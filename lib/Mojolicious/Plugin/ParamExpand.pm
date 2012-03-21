@@ -28,11 +28,9 @@ sub register
 
 sub _make_package
 {
-    my ($class, $config) = @_;
-    
-    no strict   'refs';
-    no warnings 'redefine';
+    no strict 'refs';
 
+    my ($class, $config) = @_;  
     @{"${class}::ISA"} = 'CGI::Expand';
 
     for(qw|max_array separator|) {

@@ -1,6 +1,6 @@
 use Mojo::Base -strict;
 use Mojolicious::Lite;
-use Test::More tests => 9;
+use Test::More tests => 12;
 use Test::Mojo;
 
 sub qs { join '&', @_ }
@@ -10,6 +10,7 @@ my $t = Test::Mojo->new;
 
 get '/params_are_expanded';
 get '/flattened_params_still_exist';
+get '/no_params' => sub { shift->render(text => 'ok!') };
 
 plugin 'ParamExpand';
 
@@ -38,6 +39,10 @@ $qs = qs 'hash,a=a',
 $t->get_ok("/params_are_expanded?$qs")
     ->status_is(200)
     ->content_like(qr/\Qa,b|0,1/);
+
+$t->get_ok('/no_params')
+    ->status_is(200)
+    ->content_is('ok!');
 
 __DATA__
 @@ params_are_expanded.html.ep
