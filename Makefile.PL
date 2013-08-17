@@ -15,6 +15,7 @@ WriteMakefile(
      test         => {TESTS => 't/*.t'},
      (eval { ExtUtils::MakeMaker->VERSION(6.46) } ?
        (META_MERGE  => { resources => { bugtracker => 'http://github.com/sshaw/Mojolicious-Plugin-ParamExpand/issues',
+					repository => 'http://github.com/sshaw/Mojolicious-Plugin-ParamExpand',
 					homepage   => 'http://github.com/sshaw/Mojolicious-Plugin-ParamExpand' } }) : ())
 );
 
