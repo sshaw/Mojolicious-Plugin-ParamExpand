@@ -7,8 +7,8 @@ WriteMakefile(
      NAME         => 'Mojolicious::Plugin::ParamExpand',
      VERSION_FROM => 'lib/Mojolicious/Plugin/ParamExpand.pm',
      ABSTRACT_FROM => 'lib/Mojolicious/Plugin/ParamExpand.pm',
-     AUTHOR       => 'Skye Shaw <sshaw AT lucas.cis.temple.edu>',	      
-     PREREQ_PM    => { 'Mojolicious' => '2.52', 
+     AUTHOR       => 'Skye Shaw <skye.shaw AT gmail.com>',
+     PREREQ_PM    => { 'Mojolicious' => '2.52',
 		       'CGI::Expand' => 0 },
      LICENSE      => 'perl',
      MAN3PODS	  => {},
@@ -19,7 +19,7 @@ WriteMakefile(
 					homepage   => 'http://github.com/sshaw/Mojolicious-Plugin-ParamExpand' } }) : ())
 );
 
-# Create README.pod for a repo's GitHub page. Unlike CPAN, GitHub won't 
+# Create README.pod for a repo's GitHub page. Unlike CPAN, GitHub won't
 # display the module's POD, it looks for a README.*
 sub MY::postamble
 {
