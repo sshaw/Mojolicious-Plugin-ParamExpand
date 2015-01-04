@@ -154,4 +154,4 @@ If this is undesirable you could L<< set C<max_array> to zero|/max_array >>.
 
 =head1 SEE ALSO
 
-L<CGI::Expand>, L<Mojolicious::Plugin::GroupedParams>
+L<CGI::Expand>, L<Mojolicious::Plugin::FormFields>, L<Mojolicious::Plugin::GroupedParams>
