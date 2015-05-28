@@ -3,7 +3,7 @@ package Mojolicious::Plugin::ParamExpand;
 use Mojo::Base 'Mojolicious::Plugin';
 use CGI::Expand;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub register
 {
@@ -18,7 +18,14 @@ sub register
 
       eval { $hash = $class->expand_hash($c->req->params->to_hash) };
       if($@) {
-	  $c->render_exception($@);
+	  # Mojolicious < 6.0 uses render_exception
+	  if($c->can('render_exception')) {
+	    $c->render_exception($@);
+	  }
+	  else {
+	    $c->reply->exception($@);
+	  }
+
 	  return;
       }
 
