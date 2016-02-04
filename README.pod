@@ -110,3 +110,10 @@ If this is undesirable you could L<< set C<max_array> to zero|/max_array >>.
 =head1 SEE ALSO
 
 L<CGI::Expand>, L<Mojolicious::Plugin::FormFields>, L<Mojolicious::Plugin::GroupedParams>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2012-2016 Skye Shaw.
+
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
